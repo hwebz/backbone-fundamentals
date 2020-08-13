@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script>
+            // Models
+            var Todo = Backbone.Model.extend({});
+
+            // We can then create our own concrete instance of a (Todo) model
+            // with no values at all
+            var todo1 = new Todo();
+            // Following logs: {}
+            console.log(JSON.stringify(todo1));
+
+            // or with some arbitrary data:
+            var todo2 = new Todo({
+                title: 'Check the attributes of both model instances in the console',
+                completed: true
+            });
+
+            // Following logs: {"title": "Check the attributes of both model instances in the console", "completed": true}
+            console.log(JSON.stringify(todo2));
+
+            // ===========================================================================================================
+            // Initialization
+            var Animal = Backbone.Model.extend({
+                initialize: function() {
+                    console.log('This model has been initialized.');
+                }
+            });
+
+            var myPet = new Animal();
+            // Logs: This model has been initialized.
+
+            // ===========================================================================================================
+            // Default values
+            var Teacher = Backbone.Model.extend({
+                // Default teacher attribute values
+                defaults: {
+                    firstName: '',
+                    lastName: '',
+                    age: 0,
+                    isSingle: true
+                }
+            });
+
+            // Now we can create our concrete instance of the model
+            // with default values as follows:
+            var teacher1 = new Teacher();
+
+            // Following logs: {"firstName": "", "lastName": "", "age": 0, "isSingle": true}
+            console.log(JSON.stringify(teacher1));
+
+            // Or we could instantiate it with some of the attributes (e.g., with custom title)
+            var teacher2 = new Teacher({
+                firstName: "Harry",
+                lastName: "Potter",
+                age: 25,
+                isSingle: false
+            });
+
+            // Following logs: {"firstName": "Harry", "lastName": "Potter", "age": 25, "isSingle": false}
+            console.log(JSON.stringify(teacher2));
+
+            // ===========================================================================================================
+            // Getters & Setters
+            console.log(teacher2.get('firstName')); // Harry
+            console.log(teacher2.get("age")); // 25
+            console.log(teacher2.toJSON());
+
+            teacher1.set("firstName", "Anna");
+            teacher1.set("lastName", "Sarapovah");
+            teacher1.set("age", 34);
+            console.log(teacher1.toJSON());
+
+            // Direct access
+            var Person = new Backbone.Model();
+            Person.on("change:name", function() {
+                console.log("Name changed");
+            })
+            Person.set({
+                name: 'Andrew'
+            });
+            // Log entry: Name changed
+
+            Person.set({
+                name: 'Jeremy'
+            }, {
+                silent: true
+            })
+            // no log entry
+
+            console.log(Person.hasChanged("name"));
+            // true: change was recorded
+            console.log(Person.hasChanged(null));
+            // true: something (anything) has changed
+
+            // ===========================================================================================================
+            // Listening for changes to your model
+            var Post = Backbone.Model.extend({
+                // Default todo attribute values
+                defaults: {
+                    title: '',
+                    description: '',
+                    isPublished: false
+                },
+                initialize: function() {
+                    console.log('Post model has been initialized.');
+                    this.on('change', function() {
+                        console.log('- values for Post model have changed.');
+                    });
+
+                    this.on('change:title', function() {
+                        console.log('- Title has changed.');
+                    });
+                },
+                setTitle: function(newTitle) {
+                    this.set({ title: newTitle });
+                }
+            });
+
+            var myPost = new Post();
+            myPost.set('title', 'JavaScript Frameworks in 2020');
+            console.log('Title has changed: ' + myPost.get('title'));
+
+            myPost.set('isPublished', true);
+            console.log('My post has published: ' + myPost.get('isPublished'));
+
+            myPost.set({
+                title: 'Top JavaScript Frameworks to learn in 2020',
+                description: 'Here are some most populate JS frameworks you should learn in 2020',
+                isPublished: true
+            });
+
+            // Above logs:
+            // Post model has been initialized.
+            // - Values for Post model have changed.
+            // Title has changed: JavaScript Frameworks in 2020
+            // - Values for Post model have changed.
+            // My post has published: true
+            // - Values for Post model have changed.
+
+            myPost.setTitle('Top 10 JavaScript Frameworks to learn in 2020');
+            // Above logs:
+            // - Values for Post model have changed.
+            // - Title has changed.
+
+            // Validation
+            var Human = new Backbone.Model({ name: 'Jeremy' });
+
+            // Validate the model name
+            Human.validate = function(attrs) {
+                if (!attrs.name) {
+                    return 'I need your name';
+                }
+            };
+
+            // Change the name
+            Human.set({ name: 'Samuel' });
+            console.log(Human.get('name'));
+            // 'Samuel'
+
+            // Remove the name attributes, force validation
+            Person.unset('name', { validation: true });
+            // false
+
+            // More complete validation example
+            var User = Backbone.Model.extend({
+                defaults: {
+                    isActive: false
+                },
+                validate: function(attributes) {
+                    if (attributes.title === undefined) {
+                        return "Remember to set a title for your todo.";
+                    }
+                },
+                initialize: function() {
+                    console.log('User model has been initialized.');
+                    this.on("invalid", function(model, error) {
+                        console.log(error);
+                    });
+                }
+            });
+
+            var myUser = new User();
+            myUser.set('isActive', true, { validate: true }); // logs: Remember to set a title for your todo.
+            console.log('isActive: ' + myUser.get('isActive')); // isActive: false
+            
+            var emptyUser = new Todo(null, { validate: true });
+            console.log(emptyUser.validationError);
+        </script>
+    </body>
+</html>
