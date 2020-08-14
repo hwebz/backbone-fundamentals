@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script>
+            var animals = new Backbone.Collection;
+            animals.add([
+                {
+                    id: 1,
+                    name: "Dog",
+                    age: 3
+                }, {
+                    id: 3,
+                    name: "Cat",
+                    age: 2
+                }, {
+                    id: 2,
+                    name: "Horse",
+                    age: 5
+                }, {
+                    id: 4,
+                    name: "Duck",
+                    age: 1
+                }
+            ]);
+
+            // =============================================
+            // Iteration using hard dependency Underscore
+            animals.forEach(function(animal) {
+                console.log(animal.get('name'));
+            });
+
+            // =============================================
+            // Sorting
+            var sortedByAlphabet = animals.sortBy(function(animal) {
+                return animal.get("name").toLowerCase();
+            });
+
+            console.log("- Now sorted by name: ");
+
+            sortedByAlphabet.forEach(function(model) {
+                console.log(model.get('name'));
+            });
+
+            // Above logs
+            // - Now sorted by name: 
+            // Cat
+            // Dog
+            // Duck
+            // Horse
+
+            // =============================================
+            // Map
+            var counter = 1;
+            console.log(animals.map(function(animal) {
+                return counter++ + ". " + animal.get('name');
+            }));
+            // Above logs: ["1. Dog", "2. Cat", "3. Horse", "4. Duck"]
+
+            // =============================================
+            // Min/Max
+            console.log(animals.max(function(model) {
+                return model.id;
+            }).id);
+
+            console.log(animals.min(function(model) {
+                return model.id;
+            }).id);
+            // Above logs: 4 1
+
+            // =============================================
+            // Pluck - extra a specific attribute into an array
+            console.log(animals.pluck('name'));
+            // Above logs: ["Dog", "Cat", "Horse", "Duck"]
+            
+            // =============================================
+            // Filter
+            var Todo = new Backbone.Model();
+            var Todos = Backbone.Collection.extend({
+                model: Todo,
+                filterById: function(ids) {
+                    return this.filter(function(c) {
+                        return _.contains(ids, c.id);
+                    });
+                }
+            });
+
+            // =============================================
+            // indexOf
+            var people = new Backbone.Collection;
+
+            // apply sorting by name
+            people.comparator = function(a, b) {
+                return a.get('name') < b.get('name') ? -1 : 1;
+            };
+
+            var tom = new Backbone.Model({ name: 'Tom' });
+            var rob = new Backbone.Model({ name: 'Rob' });
+            var tim = new Backbone.Model({ name: 'Tim' });
+
+            people.add(tom);
+            people.add(rob);
+            people.add(tim);
+            console.log(people.indexOf(rob) === 0); // true
+            console.log(people.indexOf(tim) === 1); // true
+            console.log(people.indexOf(tom) === 2); // true
+
+            // =============================================
+            // any()
+            console.log(animals.any(function(model) {
+                return model.id > 2;
+            }));
+
+            console.log(animals.some(function(model) {
+                return model.id > 2
+            }));
+
+            // =============================================
+            // size()
+            console.log(animals.size());
+
+            // equivalent to
+            console.log(animals.length);
+
+            // =============================================
+            // isEmpty()
+            console.log(animals.isEmpty());
+
+            // =============================================
+            // groupBy()
+            var youngAnimals = animals.groupBy('age');
+            var yAnimals = new Backbone.Collection(youngAnimals[1]);
+            console.log(yAnimals.pluck('name'));
+
+            // =============================================
+            // pick() - extract a set of attributes from a model
+            var Todo = Backbone.Model.extend({
+                defaults: {
+                    title: '',
+                    completed: false
+                }
+            });
+            var newTodo = new Todo({ title: 'go to Australia.'});
+            console.log(newTodo.pick('title'));
+            // console.log(newTodo.pick(['title', 'completed']));
+
+            // =============================================
+            // pick() - extract all attributes except those listed
+            var anotherTodo = new Todo({ title: 'go to China.' });
+            console.log(anotherTodo.omit('title'));
+
+            // =============================================
+            // keys() & values()
+            console.log(newTodo.keys());
+            console.log(newTodo.values());
+
+            // =============================================
+            // pairs() - get list of attributes as [key, value] pairs
+            var pairs = newTodo.pairs();
+
+            console.log(pairs[0]);
+            // logs: ["title", "go o Austria."]
+            console.log(pairs[1]);
+            // logs: ["completed", false]
+
+            // =============================================
+            // invert() - revert keys are values, values are keys
+            console.log(newTodo.invert());
+
+            // =============================================
+            // chain()
+            var collection = new Backbone.Collection([
+                { name: 'Tim', age: 5 },
+                { name: 'Ida', age: 26 },
+                { name: 'Rob', age: 55 }
+            ]);
+
+            var filteredNames = collection.chain()  // start chain, returns wrapper around collection's models
+                .filter(function(item) { return item.get('age') > 10; }) // returns wrapper array excluding Tim
+                .map(function(item) { return item.get('name'); }) // returns wrapper array containing remaining names
+                .value(); // terminates the chain and returns the resulting array
+
+            console.log(filteredNames); // logs: ['Ida', 'Rob']
+
+            // some of backbone-specific methods return this by default
+            // collection.add().add().add();
+        </script>
+    </body>
+</html>
