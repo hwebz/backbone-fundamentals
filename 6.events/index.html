@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script>
+            // Backbone.Events is mixed into other classes
+            // Backbone
+            // Backbone.Model
+            // Backbone.Collection
+            // Backbone.Router
+            // Backbone.History
+            // Backbone.View
+            Backbone.on('event', function() {
+                console.log('Handled Backbone event');
+            });
+            Backbone.trigger('event');
+
+            // =============================================
+            // on(), off() and trigge()
+            var ourObject = {};
+
+            // Mixin
+            _.extend(ourObject, Backbone.Events);
+
+            function dancing(msg) { console.log("We started " + msg);}
+
+            // Add a custom event
+            ourObject.on('dance', function(msg) {
+                console.log('We triggered ' + msg);
+            });
+
+            ourObject.on('all', function(eventName) {
+                console.log("The name of the event passed was " + eventName);
+            });
+
+            // namespacing event names
+            ourObject.on('dance:tap', dancing);
+            ourObject.on('dance:break', dancing);
+
+            // Trigger the custom event
+            // This time each event will be caught with a catch 'all' event listener
+            ourObject.trigger('dance', 'our event');
+            ourObject.trigger('dance:tap', 'tap dancing. Yeah!');
+            ourObject.trigger('dance:break', 'break dancing. Yeah!');
+
+            // Removes event bound to the object
+            ourObject.off('dance:tap');
+
+            // Trigger the custom events again, but one is logged.
+            ourObject.trigger('dance:tap', 'stopped tap dancing.'); // won't be logged as it's not listened for
+            ourObject.trigger('dance:break', 'break dancing. Yeah!');
+
+            function jumping(msg) { console.log("We are jumping. " + msg); }
+            // function jumping(msg, duration) { console.log("We are jumping. " + msg + ", in " + duration); }
+
+            // Add two listeners to the same event
+            ourObject.on('move', dancing);
+            ourObject.on('move', jumping);
+
+            // Trigger the events. Both listeners are called.
+            ourObject.trigger('move', 'Yeah!');
+
+            // Removes specified listener
+            ourObject.off('move', dancing);
+
+            // Trigger the events again. One listener left.
+            ourObject.trigger('move', 'Yeah, jump, jump!');
+            // ourObject.trigger('move', 'Yeah, jump, jump!', '15 minutes');
+            ourObject.trigger('move dance dance:tap', 'very tired from so much action.');
+
+            // ========================================================================
+            // listenTo() & stopListening()
+            var a = _.extend({}, Backbone.Events);
+            var b = _.extend({}, Backbone.Events);
+            var c = _.extend({}, Backbone.Events);
+
+            // add listeners to A for events on B and C
+            a.listenTo(b, 'anything', function(event) {
+                console.log('anything happened');
+            });
+            a.listenTo(c, 'everything', function(event) {
+                console.log('everything happened');
+            });
+
+            // trigger an event
+            b.trigger('anything'); // logs: anything happened
+
+            // stop listening
+            a.stopListening();
+            // a.stopListening(b);
+            // a.stopListening(b, 'anything');
+            // a.stopListening(b, 'anything', callback);
+
+            // A does not receive these events
+            b.trigger('anything');
+            c.trigger('everything');
+
+            a.remove(); // stopListening() implicitly called
+            b.trigger('anything'); // does not log anything
+        </script>
+    </body>
+</html>
