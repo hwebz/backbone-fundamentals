@@ -1,11 +1,11 @@
-htm<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
     </head>
     <body>
-
+        <div id="listItem"></div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="http://underscorejs.org/underscore-min.js"></script>
         <script src="http://backbonejs.org/backbone-min.js"></script>
@@ -14,6 +14,8 @@ htm<!DOCTYPE HTML>
                 tagName: 'li',
                 // Cache the template function for a single item.
                 todoTpl: _.template("An example template"),
+                // Set to existing element
+                // el: '#listItem',
                 events: {
                     'dblclick label': 'edit',
                     'keypress .edit': 'updateOnEnter',
@@ -43,9 +45,54 @@ htm<!DOCTYPE HTML>
             });
 
             var todoView = new TodoView();
+            // If element exist on the page, set el to the element
+            // var todoView = new TodoView({ el: $('#listItem') });
 
             // log reference to a DOM element that corresponds to the view instance
             console.log(todoView.el);
+
+            // ===================================================================
+            // Creating element
+            var UnorderedListView = Backbone.View.extend({
+                tagName: 'ul', // required, but defaults to 'div' if not set
+                className: 'container', // optional, you can assign multiple classes to
+                                        // this property like so: 'container homepage'
+                id: 'todos' // optional
+            });
+
+            var unorderedListView = new UnorderedListView();
+            console.log(unorderedListView.el);
+
+            // ===================================================================
+            // setElement
+            // We create two DOM elements representing buttons
+            // which could easily be containers or something else
+            var button1 = $('<button></button>');
+            var button2 = $('<button></button>');
+
+            // Define a new view
+            var View = Backbone.View.extend({
+                events: {
+                    click: function(e) {
+                        console.log(view.el === e.target);
+                    }
+                }
+            });
+
+            // Create a new instance of the view, applying it
+            // to button1
+            var view = new Vie({ el: button1 });
+
+            // Apply the view to button2 using setElement
+            view.setElement(button2);
+
+            button1.trigger('click');
+            button2.trigger('click'); // returns true
+
+            // Other example
+            var view2 = new Backbone.View;
+            view.setElement('<p><a><b>Test</a></b></p>');
+            console.log(view.$('a b').html()); // outputs "Test"
         </script>
     </body>
 </html>
