@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script>
+            var Todo = Backbone.Model.extend({
+                defaults: {
+                    title: '',
+                    completed: false
+                }
+            });
+
+            var TodosCollection = Backbone.Collection.extend({
+                model: Todo,
+                url: '/todos'
+            });
+
+            var todos = new TodosCollection();
+            todos.fetch(); // sends HTTP GET to /todos
+
+            var todo2 = todos.get(2);
+            todo2.set('title', 'go fishing');
+            todo2.save(); // sends HTTP PUT to /todos/2
+            todo2.destroy(); // sends HTTP DELETE to /todos/2 and remove from collection
+
+            todos.create({ title: 'Try out code sample' }); // sends HTTP POOST to /todos and adds to collection
+
+            // Save partial using PATCH
+            var todo = new Backbone.Model();
+            console.log(todo.destroy()); // false
+            todo.clear().set({id :1, a: 1, b: 2, c: 3, d: 4});
+            todo.save();
+            todo.save({b: 2, d: 4}, { patch: true });
+            console.log(this.syncArgs.method);
+        </script>
+    </body>
+</html>
