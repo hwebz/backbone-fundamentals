@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <div id="todos">
+            <input type="checkbox">
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script>
+            var View = Backbone.View.extend({
+                el: '#todos',
+                // bind to DOM event using events property
+                events: {
+                    'click [type="checkbox"]': 'clicked',
+                },
+                initialize: function() {
+                    // bind to DOM event using jQuery
+                    this.$el.click(this.jqueryClicked);
+
+                    // bind to API event
+                    this.on('apiEvent', this.callback);
+                },
+                // 'this' is view
+                clicked: function(event) {
+                    console.log('events handler for ' + this.el.outerHTML);
+                    this.trigger('apiEvent', event.type);
+                },
+                // 'this' is handling DOM element
+                jqueryClicked: function(event) {
+                    console.log('jQuery handler for ' + this.outerHTML);
+                },
+                callback: function(eventType) {
+                    console.log('event type was ' + eventType);
+                }
+            })
+
+            var view = new View();
+        </script>
+    </body>
+</html>

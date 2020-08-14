@@ -101,7 +101,12 @@
             b.trigger('anything');
             c.trigger('everything');
 
-            a.remove(); // stopListening() implicitly called
+            // Removing view
+            var view = new Backbone.View();
+            view.listenTo(b, 'all', function() { console.log(true); })
+            b.trigger('anything'); // logs: true
+            view.listenTo(b, 'all', function() { console.log(false); })
+            view.remove(); // stopListening() implicitly called
             b.trigger('anything'); // does not log anything
         </script>
     </body>
