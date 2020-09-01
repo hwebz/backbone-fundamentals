@@ -22,44 +22,40 @@ body {
 }
 
 .bookContainer button {
-    float: right;
     margin: 10px;
 }
 
+#addBook {
+    width: 550px;
+    margin: 15px auto;
+    background-color: white;
+    padding: 15px;
+}
+
 #addBook label {
-    width: 100px;
-    margin-right: 10px;
-    text-align: right;
-    line-height: 25px;
+    display: block;
+    flex-basis: 20%;
 }
 
 #addBook label, #addBook input {
     display: block;
     margin-bottom: 10px;
-    float: left;
-}
-
-#addBook label[for="title"], #addBook label[for="releaseDate"] {
-    clear: both;
+    width: 100%;
 }
 
 #addBook button {
     display: block;
-    margin: 5px 20px 10px 10px;
-    float: right;
-    clear: both;
+    margin: 5px auto;
+    padding: 10px 20px;
+    cursor: pointer;
 }
 
 #addBook div {
-    width: 550px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-#addBook div:after {
-    content: "";
+#addBook label {
     display: block;
-    height: 0;
-    visibility: hidden;
-    clear: both;
-    font-size: 0;
-    line-height: 0;
 }
