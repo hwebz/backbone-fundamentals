@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Marionette.js</title>
+    </head>
+    <body>
+
+        <div id="content"></div>
+
+        <script type="text/template" id="my-view-template">
+            <div class="row">
+                <label>First Name:</label>
+                <span><%= firstName %></span>
+            </div>
+            <div class="row">
+                <label>Last Name:</label>
+                <span><%= lastName %></span>
+            </div>
+            <div class="row">
+                <label>Email:</label>
+                <span><%= email %></span>
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script src="https://marionettejs.com/downloads/backbone.marionette.min.js"></script>
+        <!-- <script>
+            var MyView = Backbone.View.extend({
+                template: $('#my-view-template').html(),
+
+                render: function() {
+                    // Compile the Underscore.js template
+                    var compiledTemplate = _.template(this.template);
+
+                    // render the template with the model data
+                    var data = _.clone(this.model.attributes);
+                    var html = compiledTemplate(data);
+
+                    // populate the view with the rendered html
+                    this.$el.html(html);
+                }
+            });
+
+            var Person = Backbone.Model.extend({
+                defaults: {
+                    "firstName": "Jeremy",
+                    "lastName": "Ashkenas",
+                    "email": "jeremy@example.com"
+                }
+            });
+
+            var Derik = new Person({
+                firstName: 'Derik',
+                lastName: 'Bailey',
+                email: 'derickbailey@example.com'
+            });
+
+            var myView = new MyView({
+                model: Derik
+            });
+
+            myView.setElement('#content');
+            myView.render();
+        </script> -->
+        <!-- <script>
+            var MyView = Marionette.View.extend({
+                template: "#my-view-template"
+            });
+            
+            new MyView().render();
+        </script> -->
+        <!-- <script>
+            var ZombieView = Backbone.View.extend({
+                template: '#my-view-template',
+                
+                initialize: function() {
+                    // bind the model change to re-render this view
+                    this.listenTo(this.model, 'change', this.render);
+                },
+
+                close: function() {
+                    // unbind the events that this view is listening to
+                    this.stopListening();
+                },
+
+                render: function() {
+                    // This alert is going to demonstrate a problem
+                    alert('We`re rendering the view');
+
+                    console.log(this.model);
+                }
+            });
+
+            var Person = Backbone.Model.extend({
+                defaults: {
+                    "firstName": "Jeremy",
+                    "lastName": "Ashkenas",
+                    "email": "jeremy@example.com"
+                }
+            });
+
+            var Derik = new Person({
+                firstName: 'Derik',
+                lastName: 'Bailey',
+                email: 'derickbailey@example.com'
+            });
+
+            var Jeremy = new Person({
+                firstName: 'Jeremy',
+                lastName: 'Ashkenas',
+                email: 'jeremy@example.com'
+            });
+
+            // create the first view instance
+            var zombieView = new ZombieView({
+                model: Derik
+            });
+            Derik.set('email', 'derikbailey@example.com');
+
+            zombieView.close();    // double-tap the zombie
+
+            // create a second view instance, re-using
+            // the same variable name to store it
+            zombieView = new ZombieView({
+                model: Jeremy
+            });
+        </script> -->
+        <script>
+            var ZombieView = Marionette.ItemView.extend({
+                template: '#my-view-template',
+
+                initialize: function() {
+                    // bind the model change to re-render this view
+                    this.listenTo(this.model, 'change', this.render);
+                },
+
+                render: function() {
+                    // This alert is going to demonstrate a problem
+                    alert('We`re rendering the view');
+                }
+            });
+
+            var Joe = new Person({
+                firstName: 'Joe',
+                lastName: 'Bob',
+                email: 'joebob@example.com'
+            });
+
+            var myView = new MyView({
+                model: Joe
+            });
+
+            myView.render();
+
+            // show the view in the DOM
+            $('#content').html(myView.el);
+
+            // create a region instance, tellingit which DOM element to manage
+            var myRegion = new Marionette.Region({
+                el: '#content'
+            });
+
+            // show a view in region
+            var view1 = new MyView({
+                /* ... */
+            });
+            myRegion.show(view1);
+
+            // somewhere else in the code,
+            // show a different view
+            var view2 = new MyView({
+                /* ... */
+            });
+            myRegion.show(view2);
+        </script>
+    </body>
+</html>
